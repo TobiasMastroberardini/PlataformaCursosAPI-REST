@@ -1,3 +1,5 @@
+Es la API de una plataforma de cursos. Aca se podra manipular los datos de los Cursos
+
 Endpoints:
 
 Cursos:
