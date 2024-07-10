@@ -83,7 +83,6 @@ class CoursesController extends ApiController
         }
     }
 
-
     public function updateCourse($params = [])
     {
         $user = $this->authHelper->currentUser();
@@ -98,8 +97,16 @@ class CoursesController extends ApiController
             if ($existeId) {
                 $body = $this->getData();
                 if (isset($body->title) && isset($body->description) && isset($body->teacher_id) && isset($body->link) && isset($body->category) && isset($body->minutes)) {
-                    $this->coursesModel->updateCourse($id, $body->title, $body->description, $body->teacher_id, $body->link, $body->category, $body->minutes);
-                    $this->apiView->response('se actualizó el curso con exito', 200);
+                    $data = [
+                        'title' => $body->title,
+                        'description' => $body->description,
+                        'teacher_id' => $body->teacher_id,
+                        'link' => $body->link,
+                        'category' => $body->category,
+                        'minutes' => $body->minutes
+                    ];
+                    $this->coursesModel->updateCourse($data, $id);
+                    $this->apiView->response('se actualizó el curso con éxito', 200);
                     $this->getCourse();
                 } else {
                     $this->apiView->response('complete todos los campos', 400);

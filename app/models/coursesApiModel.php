@@ -21,11 +21,17 @@ class CoursesModel extends DB
 
     public function getCourseByMinutes($order)
     {
-        $query = $this->db->prepare('SELECT * FROM courses ORDER BY minutes $order');
+        $query = $this->db->prepare("SELECT * FROM courses ORDER BY minutes $order");
         $query->execute([]);
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function getCoursesByCategory($order)
+    {
+        $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY category $order");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
 
     public function createCourse($data)
     {

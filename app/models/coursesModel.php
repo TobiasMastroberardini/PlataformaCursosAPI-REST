@@ -49,11 +49,18 @@ class CoursesModel extends DB
         $query = $this->connect()->prepare('DELETE FROM courses WHERE course_id=?');
         $query->execute([$course_id]);
     }
-
-    public function updateCourse($course_id, $title, $description, $teacher_id, $link, $category, $minutes)
+    public function updateCourse($data, $course_id)
     {
-        $query = $this->connect()->prepare('UPDATE courses SET title=?, description=?, teacher_id=?, link=?, category=?, minutes=? WHERE course_id=?');
-        $query->execute([$course_id, $title, $description, $teacher_id, $link, $category, $minutes]);
+        $query = $this->connect()->prepare('UPDATE courses SET category = ?, description = ?, link = ?, teacher_id = ?, title = ?, minutes = ? WHERE course_id = ?');
+        $query->execute([
+            $data['category'],
+            $data['description'],
+            $data['link'],
+            $data['teacher_id'],
+            $data['title'],
+            $data['minutes'],
+            $course_id
+        ]);
     }
 
     public function getCourse($title, $description, $teacher_id, $link, $category, $minutes)
