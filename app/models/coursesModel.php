@@ -4,13 +4,27 @@ require_once 'app/models/model.php';
 class CoursesModel extends DB
 {
 
-    public function getCourses()
+    public function getCourses($page = 1, $limit = 10, $sortField = null, $sortOrder = 'ASC')
     {
-        $query = $this->connect()->prepare('SELECT * FROM courses');
-        $query->execute();
-        $courses = $query->fetchAll(PDO::FETCH_OBJ);
-        return $courses;
+        $offset = ($page - 1) * $limit;
+        $queryStr = 'SELECT * FROM courses';
+
+        if ($sortField) {
+            $queryStr .= " ORDER BY $sortField $sortOrder";
+        }
+
+        $queryStr .= " LIMIT $limit OFFSET $offset";
+
+        try {
+            $query = $this->connect()->prepare($queryStr);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_OBJ);
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return false;
+        }
     }
+
 
     public function getCourseById($course_id)
     {
@@ -20,29 +34,7 @@ class CoursesModel extends DB
         return $course;
     }
 
-    public function getCoursesByCategory($id)
-    {
-        $query = $this->connect()->prepare('SELECT * FROM courses WHERE category=?');
-        $query->execute([$id]);
-        $course = $query->fetch(PDO::FETCH_OBJ);
-        return $course;
-    }
 
-    public function getCoursesByMinutes($id)
-    {
-        $query = $this->connect()->prepare('SELECT * FROM courses WHERE minutes=?');
-        $query->execute([$id]);
-        $course = $query->fetch(PDO::FETCH_OBJ);
-        return $course;
-    }
-
-    public function getCoursesByTitle($id)
-    {
-        $query = $this->connect()->prepare('SELECT * FROM courses WHERE title=?');
-        $query->execute([$id]);
-        $course = $query->fetch(PDO::FETCH_OBJ);
-        return $course;
-    }
 
     public function deleteCourse($course_id)
     {
@@ -77,32 +69,32 @@ class CoursesModel extends DB
         $query->execute([$title, $description, $teacher_id, $link, $category, $minutes]);
     }
 
-    public function getCoursesByTitile($order)
+    public function getCoursesByCategory($order)
+    {
+        $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY category $order");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getCoursesByMinutes($order)
+    {
+        $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY minutes $order");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getCoursesByTitle($order)
     {
         $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY title $order");
-        $query->execute([]);
-
+        $query->execute();
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
-    public function getCourseByDescription($order)
-    {
-        $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY description $order");
-        $query->execute([]);
 
-        return $query->fetchAll(PDO::FETCH_OBJ);
-    }
     public function getCoursesByTeacher($order)
     {
         $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY teacher_id $order");
-        $query->execute([]);
-
+        $query->execute();
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
-    public function getCoursesByLink($order)
-    {
-        $query = $this->connect()->prepare("SELECT * FROM courses ORDER BY link $order");
-        $query->execute([]);
 
-        return $query->fetchAll(PDO::FETCH_OBJ);
-    }
 }
