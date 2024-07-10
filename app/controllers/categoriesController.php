@@ -17,12 +17,12 @@ class CategoriesController extends ApiController
     function get($params = [])
     {
 
-        $permitidos = ['category_id', 'category_name']; // Los campos permitidos para ordenamiento
+        $permitidos = ['category_id', 'category_name'];
 
-        $sortField = isset($_GET['sort']) ? $_GET['sort'] : 'category_name'; // Toma lo que esta en el sort o el predeterminado
-        $sortOrder = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'DESC' : 'ASC'; // Si esta seteado y es descendente -> desc, sino ascendente por defecto
+        $sortField = isset($_GET['sort']) ? $_GET['sort'] : 'category_name';
+        $sortOrder = isset($_GET['order']) && $_GET['order'] === 'desc' ? 'DESC' : 'ASC';
 
-        if (!in_array($sortField, $permitidos)) { // Si lo que hay no se corresponde con un campo permitido corto acá
+        if (!in_array($sortField, $permitidos)) {
             return $this->view->response("Bad Request", 400);
         }
 
