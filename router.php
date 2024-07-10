@@ -9,12 +9,16 @@ require_once './app/controllers/categoriesController.php';
 $router = new Router();
 
 $router->addRoute('courses', 'GET', 'CoursesController', 'getCourse');
-$router->addRoute('courses/filtrar', 'GET', 'CoursesController', 'getCourseFilter');
 $router->addRoute('courses/:ID', 'GET', 'CoursesController', 'getCourse');
 $router->addRoute('courses/:ID/:subrecurso', 'GET', 'CoursesController', 'getCourse');
 $router->addRoute('courses/:ID', 'PUT', 'CoursesController', 'updateCourse');
 $router->addRoute('courses', 'POST', 'CoursesController', 'createCourse');
 $router->addRoute('courses/:ID', 'DELETE', 'CoursesController', 'deleteCourse');
+
+// Rutas para filtrado de cursos
+$router->addRoute('courses/filter/category/:category', 'GET', 'CoursesController', 'filterCourses');
+$router->addRoute('courses/filter/teacher/:teacher', 'GET', 'CoursesController', 'filterCourses');
+
 
 $router->addRoute('categories', 'GET', 'categoriesController', 'get');
 $router->addRoute('category/:ID', 'GET', 'categoriesController', 'get');

@@ -14,31 +14,38 @@ class CoursesController extends ApiController
         $this->coursesModel = new CoursesModel();
         $this->authHelper = new AuthHelper();
     }
+
+
+
     public function getCourse($params = [])
     {
         if (empty($params)) {
 
+            $page = isset($_GET['page']) ? $_GET['page'] : null;
+            $limit = isset($_GET['limit']) ? $_GET['limit'] : null;
             $sort = isset($_GET['sort']) ? $_GET['sort'] : null;
             $order = isset($_GET['order']) ? strtoupper($_GET['order']) : 'ASC';
 
-            $courses = $this->coursesModel->getCourses();
+            if ($page == null & $limit == null) {
+                $courses = $this->coursesModel->getCourses();
+            } else if ($page != null & $limit != null) {
+                $courses = $this->coursesModel->getCoursesPaginated($page, $limit);
+
+            }
+
             if ($courses) {
                 if ($sort && $order) {
                     switch ($sort) {
                         case 'category':
-                            $orderedCourses = $this->coursesModel->getCoursesByCategory($order);
+                            $orderedCourses = $this->coursesModel->getOrderCoursesByCategory($order);
                             $this->apiView->response($orderedCourses, 200);
                             break;
                         case 'teacher':
-                            $orderedCourses = $this->coursesModel->getCoursesByTeacher($order);
+                            $orderedCourses = $this->coursesModel->getOrderCoursesByTeacher($order);
                             $this->apiView->response($orderedCourses, 200);
                             break;
                         case 'minutes':
-                            $orderedCourses = $this->coursesModel->getCoursesByMinutes($order);
-                            $this->apiView->response($orderedCourses, 200);
-                            break;
-                        case 'titile':
-                            $orderedCourses = $this->coursesModel->getCoursesByTitle($order);
+                            $orderedCourses = $this->coursesModel->getOrderCoursesByMinutes($order);
                             $this->apiView->response($orderedCourses, 200);
                             break;
                         default:
@@ -70,6 +77,12 @@ class CoursesController extends ApiController
                         case 'title':
                             $this->apiView->response($course->title, 200);
                             break;
+                        case 'description':
+                            $this->apiView->response($course->description, 200);
+                            break;
+                        case 'link':
+                            $this->apiView->response($course->link, 200);
+                            break;
                         default:
                             $this->apiView->response('La curso no contiene ' . $params[':subrecurso'] . '.', 404);
                             break;
@@ -82,6 +95,29 @@ class CoursesController extends ApiController
             }
         }
     }
+    public function filterCourses($params)
+    {
+        if (isset($params[':category'])) {
+            $category = $params[':category'];
+            $courses = $this->coursesModel->getCoursesByCategory($category);
+            $errorMessage = "No hay cursos en la categoría especificada";
+        } elseif (isset($params[':teacher'])) {
+            $teacher = $params[':teacher'];
+            $courses = $this->coursesModel->getCoursesByTeacher($teacher);
+            $errorMessage = "No hay cursos impartidos por el profesor especificado";
+        } else {
+            // Handle case where no category or teacher parameter is provided
+            $this->apiView->response("Falta parámetro de categoría o profesor", 400);
+            return;
+        }
+
+        if ($courses) {
+            $this->apiView->response($courses, 200);
+        } else {
+            $this->apiView->response($errorMessage, 404);
+        }
+    }
+
 
     public function updateCourse($params = [])
     {

@@ -12,6 +12,7 @@ class CoursesModel extends DB
         return $courses;
     }
 
+
     public function getAllCourses()
     {
         $query = $this->db->prepare('SELECT * FROM courses');
