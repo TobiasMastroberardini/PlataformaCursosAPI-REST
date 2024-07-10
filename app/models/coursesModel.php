@@ -44,10 +44,10 @@ class CoursesModel extends DB
         return $course;
     }
 
-    public function deleteCourse($id)
+    public function deleteCourse($course_id)
     {
         $query = $this->connect()->prepare('DELETE FROM courses WHERE course_id=?');
-        $query->execute([$id]);
+        $query->execute([$course_id]);
     }
 
     public function updateCourse($course_id, $title, $description, $teacher_id, $link, $category, $minutes)

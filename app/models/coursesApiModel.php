@@ -36,8 +36,8 @@ class CoursesModel extends DB
 
     public function updateCourse($data, $course_id)
     {
-        $query = $this->db->prepare('UPDATE courses SET category = ?, description = ?, link = ?, teacher_id = ?, title = ?, minutes = ? WHERE course_id = ?');
-        $query->execute([$data['category'], $data['description'], $data['link'], $data['teacher_id'], $data['title'], $data['minutes'], $course_id]);
+        $query = $this->db->prepare('UPDATE courses SET titile = ?, description = ?, teacher_id = ?, link = ?, category = ?, minutes = ? WHERE course_id = ?');
+        $query->execute([$data['title'], $data['description'], $data['teacher_id'], $data['link'], $data['category'], $data['minutes'], $course_id]);
     }
 
     public function deleteCourse($course_id)

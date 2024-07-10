@@ -8,14 +8,12 @@ class UserApiController extends ApiController
 {
     private $model;
     private $authHelper;
-    private $apiView;
 
     function __construct()
     {
         parent::__construct();
         $this->authHelper = new AuthHelper();
         $this->model = new UserModel();
-        $this->apiView = new ApiView();
     }
 
     function getToken($params = [])
@@ -23,35 +21,28 @@ class UserApiController extends ApiController
         $basic = $this->authHelper->getAuthHeaders();
 
         if (empty($basic)) {
-            $this->apiView->response('No envió encabezados de autenticación.', 401);
+            $this->view->response('No envió encabezados de autenticación.', 401);
             return;
         }
-
         $basic = explode(" ", $basic);
-
         if ($basic[0] != "Basic") {
-            $this->apiView->response('Los encabezados de autenticación son incorrectos.', 401);
+            $this->view->response('Los encabezados de autenticación son incorrectos.', 401);
             return;
         }
-
         $userpass = base64_decode($basic[1]);
+
         $userpass = explode(":", $userpass);
+        $user = $userpass[0];
+        $pass = $userpass[1];
+        $usuario = $this->model->getByEmail($user);
+        $userdata = [$usuario, password_verify($pass, $usuario->password)];
 
-        $email = $userpass[0];
-        $password = $userpass[1];
-
-        $user = $this->model->getByEmail($email);
-
-        $userdata = ["name" => $user];
-
-        if ($user && password_verify($password, $user->password)) {
-
+        if ($usuario && password_verify($pass, $usuario->password)) {
             $token = $this->authHelper->createToken($userdata);
-            $this->apiView->response($token, 200);
-            return;
+            $this->view->response($token);
         } else {
-            $this->apiView->response('El usuario o contraseña son incorrectos.', 401);
-            return;
+            $this->view->response('El usuario o contraseña son incorrectos.', 401);
         }
+
     }
 }

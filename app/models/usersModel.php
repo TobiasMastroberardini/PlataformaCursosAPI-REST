@@ -7,7 +7,6 @@ class UserModel extends DB
     {
         $query = $this->connect()->prepare('SELECT * FROM users WHERE email = ?');
         $query->execute([$email]);
-
         return $query->fetch(PDO::FETCH_OBJ);
     }
 }

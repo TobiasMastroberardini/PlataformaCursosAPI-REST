@@ -86,7 +86,11 @@ class CoursesController extends ApiController
 
     public function updateCourse($params = [])
     {
-
+        $user = $this->authHelper->currentUser();
+        if (!$user) {
+            $this->apiView->response('Unauthorized', 401);
+            return;
+        }
 
         if (isset($params[':ID'])) {
             $id = $params[':ID'];
@@ -112,6 +116,11 @@ class CoursesController extends ApiController
     public function createCourse()
     {
 
+        $user = $this->authHelper->currentUser();
+        if (!$user) {
+            $this->apiView->response('Unauthorized', 401);
+            return;
+        }
         $body = $this->getData();
         if (isset($body->title) && isset($body->description) && isset($body->teacher_id) && isset($body->link) && isset($body->category) && isset($body->minutes)) {
             $course = $this->coursesModel->getCourse($body->title, $body->description, $body->teacher_id, $body->link, $body->category, $body->minutes);
@@ -127,5 +136,27 @@ class CoursesController extends ApiController
         }
     }
 
+    public function deleteCourse($params = [])
+    {
+        // Verificar autenticación
+        $user = $this->authHelper->currentUser();
+        if (!$user) {
+            $this->apiView->response('Unauthorized', 401);
+            return;
+        }
+
+        if (isset($params[':ID'])) {
+            $course_id = $params[':ID'];
+            $course = $this->coursesModel->getCourseById($course_id);
+            if ($course) {
+                $this->coursesModel->deleteCourse($course_id);
+                $this->apiView->response("Curso id=$course_id eliminado con éxito", 200);
+            } else {
+                $this->apiView->response("Curso id=$course_id no encontrado", 404);
+            }
+        } else {
+            $this->apiView->response("ID de curso no proporcionado.", 400);
+        }
+    }
 }
 ?>

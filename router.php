@@ -14,6 +14,7 @@ $router->addRoute('courses/:ID', 'GET', 'CoursesController', 'getCourse');
 $router->addRoute('courses/:ID/:subrecurso', 'GET', 'CoursesController', 'getCourse');
 $router->addRoute('courses/:ID', 'PUT', 'CoursesController', 'updateCourse');
 $router->addRoute('courses', 'POST', 'CoursesController', 'createCourse');
+$router->addRoute('courses/:ID', 'DELETE', 'CoursesController', 'deleteCourse');
 
 $router->addRoute('categories', 'GET', 'categoriesController', 'get');
 $router->addRoute('category/:ID', 'GET', 'categoriesController', 'get');
@@ -24,9 +25,9 @@ $router->addRoute('category', 'POST', 'categoriesController', 'createssCategory'
 // Router productos por categoria
 $router->addRoute('courses/category/:ID', 'GET', 'coursesController', 'getCoursesByCategory');
 
-$router->addRoute('auth/token', 'GET', 'userApiController', 'getToken');
+$router->addRoute('user/token', 'GET', 'userApiController', 'getToken');
 
-$router->route($_GET['action'], $_SERVER['REQUEST_METHOD']);
+$router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);
 
 
 ?>
